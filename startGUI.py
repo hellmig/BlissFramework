@@ -92,7 +92,7 @@ def run(GUIConfigFile=None):
     bricksDirs = filter(None, bricksDirs)
     hoDirs = filter(None, hoDirs)
     
-    app = QApplication(['--sync'])
+    app = QApplication([])
     lockfile = None
 
     if not opts.designMode and GUIConfigFile: 
