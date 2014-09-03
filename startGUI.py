@@ -92,11 +92,14 @@ def run(GUIConfigFile=None):
     bricksDirs = filter(None, bricksDirs)
     hoDirs = filter(None, hoDirs)
     
-    app = QApplication([])
+    app = QApplication(['--sync'])
     lockfile = None
 
     if not opts.designMode and GUIConfigFile: 
-      lock_filename=os.path.join(tempfile.gettempdir(), '.%s.lock' % os.path.basename(GUIConfigFile or "unnamed"))
+      # 2014-05-27-bessy-mh: change location of lock file to directory without sticky bit
+      # in order to allow delete operation from different user
+      # lock_filename=os.path.join(tempfile.gettempdir(), '.%s.lock' % os.path.basename(GUIConfigFile or "unnamed"))
+      lock_filename=os.path.join('/home/mxadm/tmp', '.%s.lock' % os.path.basename(GUIConfigFile or "unnamed"))
       try:
           lockfile = open(lock_filename, "w")
       except:
