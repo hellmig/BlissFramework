@@ -551,6 +551,7 @@ class mySpinBox(QSpinBox):
         QSpinBox.__init__(self,parent)
         self.decimalPlaces=1
         self.__moving = False
+        self.__internal = False  
         self.colorGroupDict={}
         self.setValidator(QDoubleValidator(self))
         self.editor().setAlignment(QWidget.AlignRight)
@@ -561,7 +562,7 @@ class mySpinBox(QSpinBox):
         self.setEnabled(not moving)
         self.__moving = moving
     def textChanged(self):
-        if self.__moving:
+        if self.__moving or self.__internal:
           return
         else:
           self.setEditorBackgroundColor(mySpinBox.CHANGED_COLOR)
@@ -574,10 +575,12 @@ class mySpinBox(QSpinBox):
         self.validator().setRange(self.minValue(), self.maxValue(), self.decimalPlaces)
         return QSpinBox.rangeChange(self)
     def setValue(self, value):
+        self.__internal = True
         if type(value)==type(0.0):
-            return QSpinBox.setValue(self, self.d2i(value))
+            QSpinBox.setValue(self, self.d2i(value))
         else:
-            return self.setValue(self.i2d(value)) 
+            self.setValue(self.i2d(value)) 
+        self.__internal = False
     def value(self):
         return self.i2d(QSpinBox.value(self))
     def stepUp(self):
