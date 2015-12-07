@@ -60,7 +60,6 @@ class MenuBar(qt.QMenuBar):
         
         if state:
             # switch to expert mode
-            print self, "emitting: enableExpertMode, True"
             qt.QObject.emit(self.topParent, qt.PYSIGNAL("enableExpertMode"), (True, ))
 
             # go through all bricks and execute the method
@@ -556,6 +555,7 @@ class WindowDisplayWidget(qt.QScrollView):
 
                 frame_style=qt.QFrame.NoFrame
                 if item_cfg["properties"]["frameshape"]!="default":
+                    print "frameshape... ", item_cfg["properties"]["frameshape"]
                     frame_style = getattr(qt.QFrame, item_cfg["properties"]["frameshape"].capitalize())
                 if item_cfg["properties"]["shadowstyle"]!="default":
                     frame_style = frame_style | getattr(qt.QFrame, item_cfg["properties"]["shadowstyle"].capitalize())
@@ -805,7 +805,6 @@ class WindowDisplayWidget(qt.QScrollView):
         if w is not None and e is not None:
             if e.type() == qt.QEvent.MouseButtonRelease and e.button() == qt.Qt.LeftButton:
                 self.emit(qt.PYSIGNAL("itemClicked"), (w.name(), ))
-                #print "itemClicked", w.name()
                 return True
         
         return qt.QScrollView.eventFilter(self, w, e)
