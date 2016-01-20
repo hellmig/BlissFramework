@@ -418,8 +418,10 @@ class GUISupervisor(QtGui.QWidget):
                 
                 message = """Timeout while connecting to Hardware Repository server ;
                 make sure the Hardware Repository Server is running on host %s.""" % str(self.hardwareRepository.serverAddress).split(':')[0]
-                a = qt.QMessageBox.warning(None, 'Cannot connect to Hardware Repository', message, qt.QMessageBox.Retry, qt.QMessageBox.Cancel, qt.QMessageBox.NoButton)
-                if a == qt.QMessageBox.Cancel:
+                a = QtGui.QMessageBox.warning(self, 
+                    'Cannot connect to Hardware Repository', message, 
+                    QtGui.QMessageBox.Retry, QtGui.QMessageBox.Cancel, QtGui.QMessageBox.NoButton)
+                if a == QtGui.QMessageBox.Cancel:
                     logging.getLogger().warning('Gave up trying to connect to Hardware Repository server.')
                     break
             else:
