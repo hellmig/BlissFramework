@@ -110,7 +110,7 @@ class Qt4_EnergyBrick(BlissWidget):
         self.group_box.setChecked(True)
         self.new_value_validator = QtGui.QDoubleValidator(\
              0, 15, 4, self.new_value_ledit)
-        #self.new_value_ledit.setValidator(self.new_value_validator)
+        self.new_value_ledit.setValidator(self.new_value_validator)
 
     def propertyChanged(self, property_name, old_value, new_value):
         """
@@ -196,8 +196,18 @@ class Qt4_EnergyBrick(BlissWidget):
         Args.     :
         Return.   : 
         """
-        self.energy_hwobj.move_energy(float(self.new_value_ledit.text()))
-        self.new_value_ledit.setText("")
+        input_field_text = self.new_value_ledit.text()  
+        validator = self.new_value_ledit.validator()
+        state = validator.validate(input_field_text, 0)[0]
+        if state == QtGui.QValidator.Acceptable: 
+            input_value = float(self.new_value_ledit.text())
+            unit = self.units_combobox.currentText()
+            if unit == chr(197):
+                # new energy is given in Angstrom
+                self.energy_hwobj.move_energy(12.3984 / input_value)
+            elif unit=="keV":
+                self.energy_hwobj.move_energy(input_value)
+            self.new_value_ledit.setText("")
 
     def input_field_changed(self, input_field_text):
         """
@@ -210,9 +220,17 @@ class Qt4_EnergyBrick(BlissWidget):
                                                Qt4_widget_colors.LINE_EDIT_ACTIVE,
                                                QtGui.QPalette.Base)
         else: 
-            Qt4_widget_colors.set_widget_color(self.new_value_ledit, 
-                                               Qt4_widget_colors.LINE_EDIT_CHANGED,
-                                               QtGui.QPalette.Base)
+            validator = self.new_value_ledit.validator()
+            state = validator.validate(input_field_text, 0)[0]
+            if state == QtGui.QValidator.Acceptable:
+                Qt4_widget_colors.set_widget_color(self.new_value_ledit,
+                                                   Qt4_widget_colors.LINE_EDIT_CHANGED,
+                                                   QtGui.QPalette.Base)
+            else:
+                # state in (QtGui.QValidator.Intermediate, QtGui.QValidator.Invalid)
+                Qt4_widget_colors.set_widget_color(self.new_value_ledit,
+                                                   Qt4_widget_colors.LINE_EDIT_ERROR,
+                                                   QtGui.QPalette.Base)
 
     def units_changed(self, unit):
         """
@@ -240,6 +258,7 @@ class Qt4_EnergyBrick(BlissWidget):
             self.new_value_ledit.setValidator(self.new_value_validator)
             self.new_value_ledit.setToolTip("%s %.2f : %.2f" % \
                  (tool_tip, value_limits[0], value_limits[1]))
+            self.new_value_ledit.textChanged.emit(self.new_value_ledit.text())
    
     def stop_clicked(self):
         """
