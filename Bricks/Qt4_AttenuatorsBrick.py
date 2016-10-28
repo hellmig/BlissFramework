@@ -23,6 +23,8 @@ from PyQt4 import QtCore
 from BlissFramework.Utils import Qt4_widget_colors
 from BlissFramework.Qt4_BaseComponents import BlissWidget
 
+import logging
+
 
 __category__ = "Qt4_General"
 
@@ -191,7 +193,8 @@ class Qt4_AttenuatorsBrick(BlissWidget):
         Return.   : 
         """
         try:
-           new_values_str = self['formatString'] % new_value
-           self.transmission_ledit.setText("%s%%" % new_values_str)
+           new_values_str = self['formatString'] % float(new_value)
+           self.transmission_ledit.setText("%s%%" % new_values_str)   
         except:
-           pass
+           self.transmission_ledit.setText("unknown")   
+           logging.getLogger().error('Qt4_AttenuatorsBrick.transmission_value_changed: cannot display value, transmission value is not a number.')
