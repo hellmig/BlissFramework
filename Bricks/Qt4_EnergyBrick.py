@@ -250,14 +250,17 @@ class Qt4_EnergyBrick(BlissWidget):
         if self.units_combobox.currentIndex() == 0:
             value_limits = self.energy_hwobj.get_energy_limits()
             tool_tip = "Energy limits" 
+            format_str = self['kevFormatString']
         else:
             value_limits = self.energy_hwobj.get_wavelength_limits()
             tool_tip = "Wavelength limits"
+            format_str = self['angFormatString']
         if value_limits is not None:
-            self.new_value_validator.setRange(value_limits[0], value_limits[1], 2)    
+            nb_decimals = int(format_str[(format_str.index('.') + 1):-1])
+            self.new_value_validator.setRange(value_limits[0], value_limits[1], nb_decimals)    
             self.new_value_ledit.setValidator(self.new_value_validator)
-            self.new_value_ledit.setToolTip("%s %.2f : %.2f" % \
-                 (tool_tip, value_limits[0], value_limits[1]))
+            self.new_value_ledit.setToolTip("%s %.*f : %.*f" % \
+                 (tool_tip, nb_decimals, value_limits[0], nb_decimals, value_limits[1]))
             self.new_value_ledit.textChanged.emit(self.new_value_ledit.text())
    
     def stop_clicked(self):
